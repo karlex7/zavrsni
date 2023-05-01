@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}BTC ml{% endblock %}
+
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Predict</h2>
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h4>BTC-ml results</h4>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-5 pull-right">
+            <label>Buy orders</label>
+        </div>
+        <div class="col-sm-5 pull-right" style="color: grey;">
+            <label>{{ bot_report.buy_times }}</label>
+        </div>
+    </div>
+    <hr style="height:0.1px;color:gray;background-color:gray">
+    <div class="row mb-3">
+        <div class="col-sm-5 pull-right">
+            <label>Average BTC buy price</label>
+        </div>
+        <div class="col-sm-5 pull-right" style="color: grey;">
+            <label>{{ bot_report.avg_btc_buy }} $</label>
+        </div>
+    </div>
+    <hr style="height:0.1px;color:gray;background-color:gray">
+    <div class="row mb-3">
+        <div class="col-sm-5 pull-right">
+            <label>Sell orders</label>
+        </div>
+        <div class="col-sm-5 pull-right" style="color: grey;">
+            <label>{{ bot_report.sell_times }}</label>
+        </div>
+    </div>
+    <hr style="height:0.1px;color:gray;background-color:gray">
+    <div class="row mb-3">
+        <div class="col-sm-5 pull-right">
+            <label>Average BTC sell price</label>
+        </div>
+        <div class="col-sm-5 pull-right" style="color: grey;">
+            <label>{{ bot_report.avg_btc_sell }} $</label>
+        </div>
+    </div>
+    <hr style="height:0.1px;color:gray;background-color:gray">
+    <div class="row mb-3">
+        <div class="col-sm-5 pull-right">
+            <label>Average BTC buy price vs Average BTC sell price</label>
+        </div>
+        <div class="col-sm-5 pull-right" style="color: grey;">
+            <label>{{ (bot_report.avg_btc_buy - bot_report.avg_btc_sell)|round(2, 'floor')}} $</label>
+        </div>
+    </div>
+    <hr style="height:0.1px;color:gray;background-color:gray">
+    <div class="row mb-3">
+        <div class="col-sm-5 pull-right">
+            <label>Stop loss triggered</label>
+        </div>
+        <div class="col-sm-5 pull-right" style="color: grey;">
+            <label>{{ bot_report.stop_loss_times }}</label>
+        </div>
+    </div>
+    <hr style="height:0.1px;color:gray;background-color:gray">
+    <div class="row mb-3">
+        <div class="col-sm-5 pull-right">
+            <label>Money</label>
+        </div>
+        <div class="col-sm-5 pull-right" style="color: grey;">
+            <label>{{ bot_report.money }} $</label>
+        </div>
+    </div>
+    <hr style="height:0.1px;color:gray;background-color:gray">
+    <div class="row mb-3">
+        <div class="col-sm-5 pull-right">
+            <label>Btc bag</label>
+        </div>
+        <div class="col-sm-5 pull-right" style="color: grey;">
+            <label>{{ bot_report.btc_bag }} ₿</label> &nbsp; <label>{{ (bot_report.btc_bag * bot_report.btc_price)|round(2, 'floor') }} $</label>
+        </div>
+    </div>
+    <hr style="height:0.1px;color:gray;background-color:gray">
+    <div class="row mb-3">
+        <div class="col-sm-5 pull-right">
+            <label>Current BTC price</label>
+        </div>
+        <div class="col-sm-5 pull-right" style="color: grey;">
+            <label>{{ bot_report.btc_price }} $</label>
+        </div>
+    </div>
+    <hr style="height:0.1px;color:gray;background-color:gray">
+    <div class="row mb-3">
+        <div class="col-sm-5 pull-right">
+            <label>Starting money</label>
+        </div>
+        <div class="col-sm-5 pull-right" style="color: grey;">
+            <label>{{ bot_report.starting_money }} $</label>
+        </div>
+    </div>
+    <hr style="height:0.1px;color:gray;background-color:gray">
+    <div class="row mb-3">
+        <div class="col-sm-5 pull-right">
+            <label>Base line avg buy</label>
+        </div>
+        <div class="col-sm-5 pull-right" style="color: grey;">
+            <label>{{ bot_report.avg_buy }} $</label>
+        </div>
+    </div>
+    <hr style="height:0.1px;color:gray;background-color:gray">
+    <div class="row mb-3">
+        <div class="col-sm-5 pull-right">
+            <label><b>Profit</b></label>
+        </div>
+        <div class="col-sm-5 pull-right" style="color: grey;">
+            <label><b>{{ ((bot_report.money-bot_report.starting_money) +(bot_report.btc_bag * bot_report.btc_price))|round(2, 'floor') }} $</b></label>
+        </div>
+    </div>
+</div>
+{% endblock %}

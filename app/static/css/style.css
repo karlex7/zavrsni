@@ -1,0 +1,12 @@
+body{
+    background-color: #f1f1f1;
+}
+.rangeSlider{
+    width:100%;
+}
+footer {
+    margin-top: 150px;
+    text-align: center;
+    padding: 3px;
+    color: f1f1f1;
+  }

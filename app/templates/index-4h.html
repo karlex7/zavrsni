@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}BTC ml{% endblock %}
+
+{% block main %}
+<meta id="my-data" data-name="{{name}}" data-other="{{name}}">
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>4 hour model</h2>
+            <hr/>
+        </div>
+    </div>
+    <div class="row" style="max-width: 90%; margin: auto;">
+        <div class="col">
+            <canvas id="myChart" class="mb-3"></canvas>
+            <input class="rangeSlider" oninput="updateChart(this)" type="range" id="dates_selected" min=0 value={{data_count_max}} max={{data_count_max}}>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <h4>Advanced strategy</h4>
+            <form action="/predict-advanced" method="POST">
+                <div class="form-group">
+                    <label for="stop-loss" class="mb-2">Stop loss% :</label>
+                    <input class="form-control mb-3" type="number" name="stop-loss" min="0" max="50" required>
+                </div>
+                <div class="form-group">
+                    <label for="starting-money" class="mb-2">Starting money :</label>
+                    <input class="form-control mb-3" type="number" name="starting-money" min="100" required>
+                </div>
+                <div class="form-group">
+                    <label for="take-profit" class="mb-2">Take profit% :</label>
+                    <input class="form-control mb-3" type="number" name="take-profit" min="1" max="10000" required>
+                </div>
+                <div class="form-group">
+                    <label for="buy-amout" class="mb-2">Buy amout% :</label>
+                    <input class="form-control mb-3" type="number" name="buy-amout" min="1" max="100" required>
+                </div>
+                <input type="hidden" name="selected-data-number1" id="selected-data-number1" value="-1" required>
+                <input type="hidden" name="timeframe" id="timeframe" value="4" required>
+                <button type="submit" class="btn btn-primary">Run advanced strategy</button>
+            </form>
+        </div>
+        <div class="col">
+            <h4>Auto buy/sell strategy</h4>
+            <form action="/predict-auto-buy-sell" method="POST">
+                <div class="form-group">
+                    <label for="starting-money" class="mb-2">Starting money :</label>
+                    <input class="form-control mb-3" type="number" name="starting-money-buy-sell" min="100" required>
+                </div>
+                <div class="form-group">
+                    <label for="buy-amout" class="mb-2">Buy amout% :</label>
+                    <input class="form-control mb-3" type="number" name="buy-amout-buy-sell" min="1" max="100" required>
+                </div>
+                <input type="hidden" name="selected-data-number2" id="selected-data-number2" value="-1" required>
+                <input type="hidden" name="timeframe" id="timeframe" value="4" required>
+                <button type="submit" class="btn btn-primary">Run auto buy/sell strategy</button>
+            </form>
+        </div>
+        <div class="col">
+            <h4>Auto buy strategy infinity</h4>
+            <form action="/predict-buy-only" method="POST">
+                <div class="form-group">
+                    <label for="starting-money" class="mb-2">We assume you have infinite money! And you like Bitcoin.</label>
+                </div>
+                <div class="form-group">
+                    <label for="buy-amount" class="mb-2">Buy amount $ :</label>
+                    <input class="form-control mb-3" type="number" name="buy-amount" min="1" required>
+                </div>
+                <input type="hidden" name="selected-data-number3" id="selected-data-number3" value="-1" required>
+                <input type="hidden" name="timeframe" id="timeframe" value="4" required>
+                <button type="submit" class="btn btn-primary">Run infinite buy only strategy</button>
+            </form>
+        </div>
+        <div class="col">
+            <h4>Infinity buy/sell strategy</h4>
+            <form action="/predict-infinity" method="POST">
+                <div class="form-group">
+                    <label class="mb-2">We assume you have infinite money! But you like Profis.</label>
+                </div>
+                <input type="hidden" name="selected-data-number4" id="selected-data-number4" value="-1" required>
+                <input type="hidden" name="timeframe" id="timeframe" value="4" required>
+                <button type="submit" class="btn btn-primary">Run infinite strategy</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let myChart = document.getElementById('myChart').getContext('2d');
+    var data_close = {{ data_close|tojson }};
+    var data_date = {{ data_date|tojson }};
+
+
+    let btcChart = new Chart(myChart,{
+    type:'line', // bar, pie, line, radar, polarArea
+    data:{
+        labels:data_date,
+        datasets:[{
+            label:'BTC-USDT',
+            data:data_close,
+            borderColor: 'rgb(75, 192, 192)'
+        }]
+    },
+    options:{animations: {
+      y: {
+        easing: 'easeInOutElastic',
+        from: (ctx) => {
+          if (ctx.type === 'data') {
+            if (ctx.mode === 'default' && !ctx.dropped) {
+              ctx.dropped = true;
+              return 0;
+            }
+          }
+        }
+      }
+    },
+        responsive: true,
+        scales: {
+        x: {
+            ticks: {
+                display: false
+            },
+            grid: {
+                display: false
+            }
+        }
+    }
+    }
+    });
+
+    function updateChart(range){
+        const rangeValue = data_date.slice(0, range.value);
+        btcChart.config.data.labels = rangeValue;
+        
+        const rangeClose = data_close.slice(0,range.value);
+        var max_value = 0
+        for (i = 0; i < rangeClose.length; i++) {
+            if(rangeClose[i] > max_value){
+                max_value = rangeClose[i];
+            }
+        }
+        max_value = max_value + max_value*0.1;
+        btcChart.config.options.scales.y.max = max_value;
+        btcChart.update();
+
+        document.getElementById('selected-data-number1').value = range.value;
+        document.getElementById('selected-data-number2').value = range.value;
+        document.getElementById('selected-data-number3').value = range.value;
+        document.getElementById('selected-data-number4').value = range.value;
+    };
+</script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}
